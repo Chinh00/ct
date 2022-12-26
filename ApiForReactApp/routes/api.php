@@ -22,5 +22,17 @@ Route::post("/login", [ControllerApiTest::class, "create"]);
 Route::post("/register", [ControllerApiTest::class, "index"]);
 Route::get("/email/{id}", [ControllerApiTest::class, "get"]);
 Route::post("/add", [ControllerApiTest::class, "add"]);
-Route::get("/data", [ControllerApiTest::class, "data"]);
+Route::post("/data", [ControllerApiTest::class, "data"]);
+Route::post("/item", [ControllerApiTest::class, "item"]);
+Route::post("/delete", [ControllerApiTest::class, "delete"]);
+Route::post("/data/day", [ControllerApiTest::class, "data"]);
+
+
+
+Route::post("/add-out", [ControllerApiTest::class, "addOut"]);
+Route::post("/data-out", [ControllerApiTest::class, "dataOut"]);
+Route::post("/delete-out", [ControllerApiTest::class, "deleteOut"]);
+Route::post("/list-user", [ControllerApiTest::class, "getListUser"]);
+
+
 

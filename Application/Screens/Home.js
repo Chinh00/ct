@@ -9,10 +9,12 @@ import month from './Month'
 import year from "./Year"
 import MoneyTab from './MoneyTab';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Outcome from './outcome';
 
 const Tab = createMaterialTopTabNavigator();
 const Stack = createNativeStackNavigator();
 const Home = () => {
+    
     return (
         <Tab.Navigator initialRouteName='Screen1' >
                 
@@ -23,7 +25,7 @@ const Home = () => {
             />
             <Tab.Screen name='Screen2' options={{
                 title: "Chi tiêu"
-            }} component={MoneyTab} />
+            }} component={Outcome} />
         </Tab.Navigator>
             
     );

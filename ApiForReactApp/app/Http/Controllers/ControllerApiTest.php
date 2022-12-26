@@ -12,39 +12,79 @@ class ControllerApiTest extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    
+    public function deleteOut(Request $request) {
+        DB::table("spending")->where("id", $request->id)->delete();
+        return response()->json("TRUE");
+
+    }
+    public function getListUser(){
+        $data = DB::table("user")->get();
+        return response()->json($data);
+    }
     public function index(Request $request)
     {   
         
         $in = DB::table("user")->insert([
             "email" => $request->email,
             "password" => $request->password,
+            "subtotal" => $request->subtotal
         ]);
         if ($in > 0){
-            return response()->json("TRUE");
+            return response()->json((DB::table("user")->select("id")->where("email", $request->email)->get()[0]->id));
         }
         return response()->json("FALSE");
     }
-
+    public function dataOut(Request $request){
+        $data = DB::table("spending")->select("spending.id", "spending.total", "spending.comment" ,  "categories.name", "spending.created_at")->join("categories", "categories.id", "=", "spending.category_id")->where("spending.user_id", $request->id)->orderBy("spending.created_at", "DESC")->get();
+            return response()->json($data);
+    }
     public function data(Request $request){
-        $data = DB::table("income")->join("user", "user.id", "=", "income.user_id")->join("categories", "categories.id", "=", "income.category_id")->where("user.email", $request->email)->get();
+        $data = DB::table("income")->select("income.id", "income.total", "income.comment" ,  "categories.name", "income.created_at")->join("categories", "categories.id", "=", "income.category_id")->where("income.user_id", $request->id)->orderBy("income.created_at", "DESC")->get();
         return response()->json($data);
     }
-    public function add(Request $request){
-        DB::table("test1")->insert([
-            "name" => $request->cate
+    public function item(Request $request) {
+        $item = DB::table("income")->where("id", $request->id)->get();
+        return response()->json($item);
+    }
+
+    public function addOut(Request $request) {
+        $inp = DB::table("spending")->insert([
+            "total" => $request->total,
+            "comment" => $request->comment,
+            "category_id" => $request->cate,
+            "created_at" => $request->time,
+            "user_id" => $request->id
+            
+            
         ]);
+        DB::table("user")->where("id", $request->id)->update([
+            "subtotal" => (DB::table("user")->select("subtotal")->where("id", $request->id)->get()[0]->subtotal - $request->total)
+        ]);
+        if ((DB::table("user")->select("subtotal")->where("id", $request->id)->get()[0]->subtotal) <= $request->total){
+            return response()->json("WARNING");
+        }
+        
+        
+        return response()->json("TRUE");
+    }
+    public function add(Request $request){
+        
         $inp = DB::table("income")->insert([
             "total" => $request->total,
             "comment" => $request->comment,
-            "category_id" => $request->id,
-            "created_at" => $request->date,
+            "category_id" => $request->cate,
+            "created_at" => $request->time,
+            "user_id" => $request->id
+            
             
         ]);
-        if ($inp > 0) {
-            return response()->json("TRUE");
-        }
-        return response()->json("FALSE");
+        // if ($inp > 0) {
+        //     return response()->json("TRUE");
+        // }
+        DB::table("user")->where("id", $request->id)->update([
+            "subtotal" => (DB::table("user")->select("subtotal")->where("id", $request->id)->get()[0]->subtotal + $request->total)
+        ]);
+        return response()->json("TRUE");
     }
     public function get($id){
         $data = DB::table("user")->where("id", $id)->get();
@@ -60,7 +100,10 @@ class ControllerApiTest extends Controller
         $data = DB::table("user")->where("email", $request->email)->where("password", $request->password)->get();
         
         if ($data->count() > 0){
-            return response()->json("TRUE");
+            if ($request->email == "a@gmail.com") {
+                return response()->json("ADMIN");
+            }
+            return response()->json((DB::table("user")->select("id")->where("email", $request->email)->get()[0]->id));
         }
         return response()->json("FALSE");
     }
@@ -71,9 +114,10 @@ class ControllerApiTest extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function delete(Request $request)
     {
-        //
+        DB::table("income")->where("id", $request->id)->delete();
+        return response()->json("TRUE");
     }
 
     /**

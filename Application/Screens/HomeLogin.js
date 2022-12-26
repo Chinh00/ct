@@ -5,7 +5,6 @@ import { Button, Text, TextInput, View, Pressable, StyleSheet } from "react-nati
 import Icon from "react-native-vector-icons/FontAwesome"
 
 
-
 const HomeLogin = ({ navigation }) => {
     AsyncStorage.getItem("isLogin", (key, val) => {
         if (val === "TRUE") {

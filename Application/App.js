@@ -35,6 +35,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import HomeNavigator from './Screens/HomeNavigator';
 import Account from './Screens/account';
+import Admin from './Screens/Admin';
 const Stack = createNativeStackNavigator();
 /* $FlowFixMe[missing-local-annot] The type annotation(s) required by Flow's
  * LTI update could not be added via codemod */
@@ -67,7 +68,9 @@ const App = ({ navigation }) => {
       <Stack.Screen name='HomeCom' component={HomeNavigator} options={{headerShown: false}} />
       <Stack.Screen name='ResetPassword' component={ResetPassword} />
       <Stack.Screen name='Account' component={Account}/>
-      
+      <Stack.Screen name='Admin' component={Admin} options={{
+        title: "Thông tin người dùng ứng dụng",
+      }} />
     </Stack.Navigator>
   )
 }

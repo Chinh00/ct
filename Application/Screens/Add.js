@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Text, View } from "react-native";
 import Modal from "react-native-modal";
 import DatePicker from "react-native-date-picker";
@@ -11,7 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome"
 import AsyncStorage from "@react-native-community/async-storage";
-function ModalTester() {
+function ModalTester({navigation}) {
   const [isModalVisible, setModalVisible] = useState(false);
   const [date, setDate] = useState(new Date())
   const toggleModal = () => {
@@ -19,14 +19,16 @@ function ModalTester() {
     setDate(date)
     
   };
-  const [email, setEmail] = useState(null);
-  const [money, setMoney] = useState(null)
-  const [cate, setCate] = useState(null)
-  const [comment, setComment] = useState(null)
-  const [id, setId] = useState(null)
+  const [email, setEmail] = useState();
+  const [money, setMoney] = useState()
+  const [cate, setCate] = useState()
+  const [comment, setComment] = useState()
+  const [id, setId] = useState()
+  useEffect(() => {
   AsyncStorage.getItem("emailUser", (key, val) => {
-    setEmail(val)
+    setId(Number(val))
   })
+  }, [])
   return (
     <SafeAreaView>
       <ScrollView>
@@ -59,8 +61,8 @@ function ModalTester() {
                 
               >
                 <Icon name="car" size={30} onPress={() => {
-                  setCate("car")
-                  setId(1)
+                  setCate(1)
+                  
               }} />
                 <Text>Di chuyển</Text>
               </View>
@@ -71,8 +73,8 @@ function ModalTester() {
                 alignItems: "center"
               }}>
                 <Icon name="home" size={30} onPress={() => {
-                  setCate("home")
-                  setId(2)
+                  setCate(2)
+                  
               }} />
                 <Text>Nhà</Text>
                 </View>
@@ -83,8 +85,8 @@ function ModalTester() {
                 alignItems: "center"
               }}>
                 <Icon name="heart" size={30} onPress={() => {
-                  setCate("heart")
-                  setId(3)
+                  setCate(3)
+                  
               }} />
                 <Text>Sức khỏe</Text>
                 </View>
@@ -95,8 +97,8 @@ function ModalTester() {
                 alignItems: "center"
               }}>
                 <Icon name="gift" size={30} onPress={() => {
-                  setCate("gift")
-                  setId(4)
+                  setCate(4)
+                  
               }} />
                 <Text>Quà tặng</Text>
               </View>
@@ -107,8 +109,8 @@ function ModalTester() {
                 alignItems: "center"
               }}>
                 <Icon name="money" size={30} onPress={() => {
-                  setCate("money")
-                  setId(5)
+                  setCate(5)
+                  
               }} />
                 <Text>Tiền lương</Text>
               </View>
@@ -127,8 +129,8 @@ function ModalTester() {
               }}>
                 <Icon name="paperclip" size={30}
                 onPress={() => {
-                  setCate("paperclip")
-                  setId(6)
+                  setCate(6)
+                  
               }}/>
                 <Text>Tạp phẩm</Text>
               </View>
@@ -139,8 +141,8 @@ function ModalTester() {
                 alignItems: "center"
               }}>
                 <Icon name="question" size={30} onPress={() => {
-                  setCate("question")
-                  setId(7)
+                  setCate(7)
+                  
               }} />
                 <Text>Khác</Text>
               </View>
@@ -165,28 +167,32 @@ function ModalTester() {
             width: 100,
             marginVertical: 20
           }}> 
-            <Button title="Thêm" color={"#108926"} onPress={async ({ navigation }) => {
+            <Button title="Thêm" color={"#108926"} onPress={async () => {
+              
               await fetch("http://10.0.2.2:8000/api/add", {
                             method: 'POST',
                             headers:{
                                 'Accept': 'application/json',
-                                'Content-Type': 'application.json'
+                                'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
+                              
                               total: money,
-                              id: id,
                               comment: comment,
-                              date: moment(date).local("vi", vi).format("YYYY/MM/DD"),
+                              id: id,
+                              time: moment(date).local("vi", vi).format("YYYY/MM/DD"),
+                              cate: cate
+                              
                             })
                         })
                             .then( responsive => responsive.json())
                             .then( responsive => {
-                                if (responsive === "TRUE") {
-                                  alert("Thêm thành công !!!")
-                                } else {
-                                    alert("loiiiiiii");
-                                }
-                            }).catch((error) => {alert(error)})
+                                navigation.navigate("HomeNav1")
+                            }).catch((error) => { alert(error) })
+              setMoney()
+              setCate()
+              setComment()
+              
             }} />
           </View>
         </View>

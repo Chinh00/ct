@@ -39,10 +39,15 @@ const Login = ({navigation}) => {
                             })
                         })
                             .then( responsive => responsive.json())
-                            .then( responsive => {
-                                if (responsive === "TRUE") {
+                            .then(responsive => {
+                                if (responsive === "ADMIN") {
+                                    navigation.navigate("Admin")
+                                    return;
+                                }
+                                if (responsive !== "FALSE") {
                                     AsyncStorage.setItem("isLogin", "TRUE");
-                                    AsyncStorage.setItem("emailUser", email);
+                                    AsyncStorage.setItem("emailUser", String(responsive));
+
                                     navigation.navigate("HomeCom")
                                 } else {
                                     alert("Tai khoan mat khau khong chinh xac ... ");

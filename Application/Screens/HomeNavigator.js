@@ -11,6 +11,8 @@ import Icon from "react-native-vector-icons/FontAwesome"
 import Chart from "./Chart";
 import { ScreenStackHeaderRightView } from "react-native-screens";
 import Add from "./Add";
+import Search from "./Search.js";
+import AddOutCome from "./AddOut";
 const Drawer = createDrawerNavigator();
 const HomeNavigator = () => {
       
@@ -31,15 +33,20 @@ const HomeNavigator = () => {
             }}
             />
             <Drawer.Screen name="Add" component={Add} options={{
-                title: "Thêm khoản thu chi"
+                title: "Thêm khoản thu"
             }} />
 
-            <Drawer.Screen name="HomeNav2" options={{
-                title: "Biểu đồ"
-            }} component={Chart} />
+            
+            <Drawer.Screen name="AddOut" component={AddOutCome} options={{
+                title: "Thêm khoản chi"
+            }} />
+            <Drawer.Screen name="Search" component={Search} options={{
+                title: "Tìm kiếm nguồn thu chi"
+            }} />
             <Drawer.Screen name="Account" component={Account} options={{
                 title: "Thông tin người dùng"
             }} />
+            
         </Drawer.Navigator>
     )
 }

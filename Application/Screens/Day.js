@@ -1,36 +1,123 @@
 /* eslint-disable prettier/prettier */
 
-import { Text, StyleSheet, View, ScrollView, SafeAreaView } from 'react-native'
-import React, { Component, useState } from 'react'
+import { Text, StyleSheet, View, ScrollView, SafeAreaView, Button, Touchable } from 'react-native'
+import React, { Component, useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-community/async-storage';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Modal from "react-native-modal";
+import { TouchableOpacity } from 'react-native-gesture-handler';
+const Stack = createNativeStackNavigator();
 const Day = () => {
-    const generateColor = () => {
-  const randomColor = Math.floor(Math.random() * 16777215)
-    .toString(16)
-    .padStart(6, '0');
-  return `#${randomColor}`;
-};
-  const [data, setData] = useState(null)
-  const [email, setEmail] = useState(null);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [id, setId] = useState()
+  const [data, setData] = useState([])
+  const [dataItem, setItem] = useState()
+  
+
+  const toggleModal = () => {
+  setModalVisible(!isModalVisible);
+  };
   AsyncStorage.getItem("emailUser", (key, val) => {
-    setEmail(val)
+        setId(Number(val))
   })
+  useEffect(() => {
+      
+    fetch("http://10.0.2.2:8000/api/data", {
+                            method: 'POST',
+                            headers:{
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                              id: id
+                            })
+                        })
+                            .then( responsive => responsive.json())
+                            .then( responsive => {
+                                setData(responsive)
+                            }).catch((error) => { alert(error) })
+    
+    }, [id])
+    
+  
   
   
   return (
-      <SafeAreaView>
-        <ScrollView>
-          <View
+    
+    <SafeAreaView>
+      <Modal isVisible={isModalVisible} style={{flex: 1, justifyContent: "center", alignItems:"center"}}>
+          <View style={{ flex: 1 }}>
+          
+        </View>
+        <Button title='Hủy' onPress={toggleModal} />
+        <View style={{marginVertical: 10}}>
+          <Button title='Xóa' color={"red"} onPress={() => {
+            
+            (async () => {
+            await  fetch("http://10.0.2.2:8000/api/delete", {
+                            method: 'POST',
+                            headers:{
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                              id: dataItem
+                            })
+                        })
+                            .then( responsive => responsive.json())
+                              .then(responsive => {
+                                if (responsive === "TRUE") {
+                                  alert("Xóa thành công")
+                                }
+                              }).catch((error) => { alert(error) })
+            await  fetch("http://10.0.2.2:8000/api/data", {
+                            method: 'POST',
+                            headers:{
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                              id: id
+                            })
+                        })
+                            .then( responsive => responsive.json())
+                            .then( responsive => {
+                                setData(responsive)
+                            }).catch((error) => { alert(error) })
+              toggleModal()
+          })()
+        }} />
+        </View>
+        </Modal>
+      <ScrollView>
+        {data && data.map(res => {
+          return <View
+            key={res.id}
             style={{
-              backgroundColor: generateColor(),
-              marginVertical: 30,
+              backgroundColor: "#4BC994",
+              marginVertical: 10,
               marginHorizontal: 20,
               borderRadius: 10,
-              height: 60,
+              height: 100,
+              padding: 10
             }}
+            
+          
           >
-            <Text>sad</Text>
+            <TouchableOpacity onPress={() => {
+              setItem(res.id)
+              toggleModal()
+              
+            }} >
+            <Text>Số tiền: {(res.total).toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}</Text>
+            <Text>Loại danh mục: {res.name}</Text>
+              <Text >Thời gian: {res.created_at}</Text>
+              <Text>Ghi chú: { res.comment}</Text>
+            </TouchableOpacity>
+          
           </View> 
+        })}
+        
         </ScrollView>
       </SafeAreaView>
     )

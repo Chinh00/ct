@@ -4,12 +4,15 @@ import React, { useState } from "react";
 import { Text, Button, View, TextInput, StyleSheet, TouchableOpacity } from "react-native";
 import { Navigation} from "@react-navigation/native"
 import AsyncStorage from "@react-native-community/async-storage";
+import { ScrollView } from "react-native-gesture-handler";
 const Login = ({navigation}) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [subtotal, setSubtotal] = useState(0)
     return (
-        <View style={style.container}>
+        <ScrollView style={{flex: 1, padding: 20}}>
+            <View style={style.container}>
             <View style={style.form} >
                 <View style={style.form_item}>
                     <Text>Email</Text>
@@ -22,6 +25,10 @@ const Login = ({navigation}) => {
                 <View style={style.form_item}>
                     <Text>Xác nhận mật khẩu</Text>
                     <TextInput underlineColorAndroid={"blue"} secureTextEntry={true} onChangeText={(confirmPassword) => setConfirmPassword(confirmPassword) } value={confirmPassword} />
+                </View>
+                <View style={style.form_item}>
+                    <Text>Số dư</Text>
+                    <TextInput underlineColorAndroid={"blue"} keyboardType="numeric" onChangeText={(sub) => setSubtotal(sub) } value={subtotal} />
                 </View>
                 
                 <View style={{
@@ -39,13 +46,14 @@ const Login = ({navigation}) => {
                             body: JSON.stringify({
                                 email: email,
                                 password: password,
+                                subtotal: subtotal
                             })
                         })
                             .then( responsive => responsive.json())
                             .then( responsive => {
-                                if (responsive == "TRUE") {
+                                if (responsive !== "FALSE") {
                                     AsyncStorage.setItem("isLogin", "TRUE");
-                                    AsyncStorage.setItem("emailUser", email);
+                                    AsyncStorage.setItem("emailUser", String(responsive));
                                     navigation.navigate("HomeCom")
                                 } else {
                                     alert("Đăng ký thất bại ... ");
@@ -64,6 +72,7 @@ const Login = ({navigation}) => {
                 </View>
             </View>
         </View>
+        </ScrollView>
         
     )
 }
@@ -87,7 +96,7 @@ const style = StyleSheet.create({
     form_item: {
         width: 300,
         fontSize: 10,
-        marginVertical: 20,
+        marginVertical: 20
     },  
     button: { 
         alignSelf: "flex-end",
